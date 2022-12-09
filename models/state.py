@@ -18,7 +18,6 @@ class State(BaseModel):
                               backref="state",
                               cascade="all, delete, delete-orphan")
     else:
-
         @property
         def cities(self):
             """ Returns the list of City instances with
