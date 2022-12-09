@@ -1,15 +1,18 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+"""This is the state class"""
 from models.base_model import BaseModel, Base
 from models.city import City
 from sqlalchemy import Column, Integer, String, ForeignKey, MetaData
 from sqlalchemy.orm import relationship, backref
 import models
-from os import 
+from os import environ
 
 
-class State(BaseModel):
-    """ this is the Class of a _state_ """
+class State(BaseModel, Base):
+    """This is the class for State
+    Attributes:
+        name: input name
+    """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
 
@@ -18,10 +21,10 @@ class State(BaseModel):
                               backref="state",
                               cascade="all, delete, delete-orphan")
     else:
+
         @property
         def cities(self):
-            """ Returns the list of City instances with
-            state_id == current State.id """
+            """ Returns the list of City instances with """
             all_cities = models.storage.all(City)
             state_cities = []
             for city_ins in all_cities.values():
