@@ -9,7 +9,7 @@ from os import
 
 
 class State(BaseModel):
-    """ State class_ """
+    """ State_ class_ """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
 
