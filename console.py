@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """This is the console for AirBnB"""
+
 import cmd
 from models import storage
 from datetime import datetime
@@ -11,7 +12,6 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from shlex import split
-
 
 class HBNBCommand(cmd.Cmd):
     """this class is entry point of the command interpreter
@@ -271,7 +271,6 @@ class HBNBCommand(cmd.Cmd):
                     self.do_update(args)
         else:
             cmd.Cmd.default(self, line)
-
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
