@@ -1,36 +1,34 @@
 #!/usr/bin/python3
-"""
-Fabric script method:
-    do_deploy: deploys archive to webservers
-Usage:
-    fab -f 2-do_deploy_web_static.py
-    do_deploy:archive_path=versions/web_static_20170315003959.tgz
-    -i my_ssh_private_key -u ubuntu
-"""
-from fabric.api import env, put, run
-import os.path
-env.hosts = ['35.229.54.225', '35.231.225.251']
+""" Does deployment"""
+
+from fabric.api import *
+import os
+
+env.hosts = ["35.174.204.230", "54.144.135.186"]
+env.user = "ubuntu"
 
 
 def do_deploy(archive_path):
-    """
-    Deploy archive to web server
-    """
-    if os.path.isfile(archive_path) is False:
+    """ Deploys archive to servers"""
+    if not os.path.exists(archive_path):
         return False
-    try:
-        filename = archive_path.split("/")[-1]
-        no_ext = filename.split(".")[0]
-        path_no_ext = "/data/web_static/releases/{}/".format(no_ext)
-        symlink = "/data/web_static/current"
-        put(archive_path, "/tmp/")
-        run("mkdir -p {}".format(path_no_ext))
-        run("tar -xzf /tmp/{} -C {}".format(filename, path_no_ext))
-        run("rm /tmp/{}".format(filename))
-        run("mv {}web_static/* {}".format(path_no_ext, path_no_ext))
-        run("rm -rf {}web_static".format(path_no_ext))
-        run("rm -rf {}".format(symlink))
-        run("ln -s {} {}".format(path_no_ext, symlink))
-        return True
-    except:
-        return False
+
+    results = []
+
+    res = put(archive_path, "/tmp")
+    results.append(res.succeeded)
+
+    basename = os.path.basename(archive_path)
+    if basename[-4:] == ".tgz":
+        name = basename[:-4]
+    newdir = "/data/web_static/releases/" + name
+    run("mkdir -p " + newdir)
+    run("tar -xzf /tmp/" + basename + " -C " + newdir)
+
+    run("rm /tmp/" + basename)
+    run("mv " + newdir + "/web_static/* " + newdir)
+    run("rm -rf " + newdir + "/web_static")
+    run("rm -rf /data/web_static/current")
+    run("ln -s " + newdir + " /data/web_static/current")
+
+    return True
